@@ -54,12 +54,29 @@ public class SecurityConfig {
                                 "/auth/register",
                                 "/auth/refresh-token"
                         ).permitAll()
-                        .pathMatchers(
-                                HttpMethod.GET,"/api/v1/flights"
-                        ).hasAnyRole("CUSTOMER")
-                        .pathMatchers(
-                                HttpMethod.GET,"/api/v1/flights/{flightId}"
-                        ).hasAnyRole("ADMIN")
+                        // Flight APIs
+                        .pathMatchers(HttpMethod.GET, "/api/v1/flights/**")
+                        .permitAll()
+
+                        .pathMatchers(HttpMethod.POST, "/api/v1/flights/**")
+                        .hasAnyRole("ADMIN", "AIRLINE_MANAGER")
+
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/flights/**")
+                        .hasAnyRole("ADMIN", "AIRLINE_MANAGER")
+
+                        // Booking APIs
+                        .pathMatchers(HttpMethod.POST, "/bookings/**")
+                        .hasRole("CUSTOMER")
+
+                        .pathMatchers(HttpMethod.GET, "/bookings/**")
+                        .authenticated()
+
+                        .pathMatchers(HttpMethod.DELETE, "/bookings/**")
+                        .hasRole("CUSTOMER")
+
+                        // User APIs
+                        .pathMatchers(HttpMethod.GET, "/users/**")
+                        .hasAnyRole("ADMIN", "SUPER_ADMIN")
 
                         .anyExchange()
                         .authenticated()
