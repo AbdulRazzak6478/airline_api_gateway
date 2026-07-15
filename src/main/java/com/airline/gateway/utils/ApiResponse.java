@@ -1,11 +1,15 @@
 package com.airline.gateway.utils;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Data
+@Builder
 public class ApiResponse<T> {
     private Boolean success;
 

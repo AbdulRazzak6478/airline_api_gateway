@@ -1,6 +1,7 @@
 package com.airline.gateway.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Service
@@ -78,4 +80,51 @@ public class JwtService {
         );
 
     }
+
+    public boolean isTokenValid(String token) {
+
+        try {
+
+            Jwts.parser()
+                    .verifyWith((SecretKey) signingKey)
+                    .build()
+                    .parseSignedClaims(token);
+
+            return true;
+
+        } catch (JwtException | IllegalArgumentException ex) {
+
+            return false;
+        }
+    }
+
+    public String extractRole(String token) {
+
+        return extractAllClaims(token)
+                .get("role", String.class);
+    }
+
+    public UUID extractUserId(String token) {
+
+        return UUID.fromString(
+
+                extractAllClaims(token)
+                        .get("userId", String.class)
+
+        );
+    }
+
+//    public boolean isTokenValid(String token) {
+//
+//        try {
+//
+//            extractAllClaims(token);
+//
+//            return !this.isTokenExpired(token);
+//
+//        } catch (Exception e) {
+//
+//            return false;
+//        }
+//    }
 }
